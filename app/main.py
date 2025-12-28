@@ -7,6 +7,7 @@ from app.schemas import WebhookMessage
 from app.storage import insert_message, list_messages
 from app.logging_utils import json_log
 from app.metrics import HTTP_COUNTER, WEBHOOK_COUNTER, LATENCY, generate_latest
+from app.storage import get_stats
 
 app = FastAPI()
 
@@ -25,6 +26,11 @@ def ready():
     if not WEBHOOK_SECRET:
         raise HTTPException(503)
     return {"status": "ready"}
+
+@app.get("/stats")
+def stats():
+    return get_stats()
+
 
 @app.post("/webhook")
 async def webhook(req: Request):
